@@ -47,8 +47,8 @@ exports.updateProduct = function (req, res) {
         product.specialPrice = req.body.specialPrice;
 
         product.save(function (err) {
-            if (err) return res.status(200).send(err.message);
-            res.status(500).jsonp(product);
+            if (err) return res.status(500).send(err.message);
+            res.status(200).jsonp(product);
         });
     });
 };
@@ -56,7 +56,7 @@ exports.updateProduct = function (req, res) {
 exports.deleteProduct = function (req, res) {
     Product.findById(req.params.id, function (err, product) {
         product.remove(function (err) {
-            if (err) return res.status(200).send(err.message);
+            if (err) return res.status(500).send(err.message);
             res.status(200).send();
         });
     });
