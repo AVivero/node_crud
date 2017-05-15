@@ -4,17 +4,34 @@ var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
 var mongoose = require('mongoose');
 
-app.use(bodyParser.urlencoded({extended: true}));
+mongoose.connect('mongodb://avivero:avivero_products@ds143081.mlab.com:43081/node_crud_products', function (err, res) {
+    if (err) {
+        console.log('ERROR: connecting to the database.' + err);
+    }
+});
+
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(methodOverride());
 
-var router = express.Router();
+var models = require('./models/Product')(app, mongoose);
+var productController = require('./controllers/products');
 
-router.get('/', function (req, res) {
-    res.send('Hello World!');
-});
 
-app.use(router);
+//API routes
+var products = express.Router();
+
+products.route('/product')
+    .get(productController.findAllProducts)
+    .post(productController.addProduct);
+
+products.route('/product:id')
+    .get(productController.findById)
+    .put(productController.updateProduct)
+    .delete(productController.deleteProduct);
+
+app.use(products);
+
 
 app.listen(3000, function () {
     console.log("Node server running on http://localhost:3000");
